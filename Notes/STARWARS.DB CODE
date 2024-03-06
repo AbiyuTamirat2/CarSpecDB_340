@@ -1,0 +1,41 @@
+# STARWARS.DB CODE
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import mysql.connector
+import json
+import requests
+
+def connect_to_sql():
+    connection = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='starwars')
+
+    return connection
+
+def create_table(cursor):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS plants (id INT PRIMARY KEY auto_increment, climate TEXT, gravity TEXT, terrain TEXT, surface_water TEXT, population TEXT)''')
+
+def fetch_characters():
+    response = requests.get('https://swapi.dev/api/planets')
+    data = json.loads(response.text)
+    return data
+
+def add_new_character(cursor, plants_info):
+    climate = plants_info['climate']
+    gravity = plants_info['gravity']
+    terrain = plants_info['terrain']
+    surface_water = plants_info['surface_water']
+    population = plants_info['population']
+
+    cursor.exexcute('INSERT INTO plants(climate, gravity, terrain, surface_water, population) VALUES(%s, %s, %s, %s, %s)', (climate, gravity, terrain, surface_water, population))
+    return cursor
+
+def main():STAR
+    connection = connect_to_sql()
+    cursor = connection.cursor()
+    plant_table = create_table(cursor)
+    fetch = fetch_characters()
+#    new_character = add_new_character(cursor, plants_info)
+    return
+
+if __name__ == "__main__":
+    main()
