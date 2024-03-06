@@ -1,0 +1,75 @@
+# STARWARS.DB PROJECT 2
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import mysql.connector
+import json
+import requests
+
+
+def connect_to_sql():
+    connection = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='starwars_db')
+
+    return connection
+
+#Create a table
+def create_table(cursor):
+    cursor.exexcute('''CREATE TABLE IF NOT EXISTS characters (id INT PRIMARY KEY auto_increment, name VARCHAR(100), height INT, mass INT, gender VARCHAR(100), birth_year VARCHAR(1000))''')
+
+#Handle Query Execution
+def query_sql(cursor, query):
+    cursor.exexcute(query)
+    return cursor
+
+#Adds resource to the DB
+def add_new_character(cursor, character_info):
+    name = character_info['name']
+    height = character_info['height']
+    mass = character_info['mass']
+    gender = character_info['gender']
+    birth_year = character_info['birth_year']
+
+    cursor.exexcute('INSERT INTO characters(name, height, mass, gender, birth_year) VALUES(%s, %s, %s, %s, %s)', (name, height, mass, gender, birth_year))
+    return cursor
+
+#Checks for a resource from the DB
+def check_if_character_exists(cursor, character_info):
+    character_name = character_info['name']
+    query = f'SELECT * FROM characters WHERE name = {character_name}'
+    return query_sql(cursor,query)
+
+#Delete a resource
+def delete_character(cursor, character_info):
+    character_name = character_info['name']
+    query = f'DELETE FROM characters WHERE name = {character_name}'
+    return query_sql(cursor,query)
+
+#Add and print resources
+def add_or_print_character(cursor, fetched_characters):
+    #Loop through characters
+    for character in fetched_characters:
+        #Checks if current chracter is in DB
+        check_if_character_exists(character)
+        #If cursor returns [] then add a new character else print character info
+        if not cursor.fetchall():
+            add_new_character(cursor, character)
+            print(f'New Character added to DB {character["name"]}')
+        else:
+            print(f'Existing Character found in DB {character["name"]}')
+
+
+
+def fetch_characters():
+    response = requests.get('https://swapi.dev/api/people')
+    data = json. loads(response.text)
+    return data
+
+
+def main():
+    connection = connect_to_sql()
+    cursor = connection.cursor()
+    create_table(cursor)
+    data = fetch_characters()
+    check = check_if_character_exists(cursor,data['results'][o])
+    print(check.fetchall())
+    return
