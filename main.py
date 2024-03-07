@@ -5,6 +5,7 @@
 import mysql.connector
 import json
 import requests
+import pandas as pd
 
 
 def connect_to_sql():
@@ -26,10 +27,13 @@ def add_new_car(cursor):
 
 
 def fetch_cars():
-    response = requests.get('https://gist.github.com/noamross/e5d3e859aa0c794be10b')
-    data = json.loads(response.text)
+  try:
+    data = pd.read_csv("cars.csv")
+    if data.empty:
+      print("The CSV file 'cars.csv' is empty or could not be found.")
+    else:
+      print("Cars data loaded successfully!")
     return data
-
 
 def main():
     conn = connect_to_sql()
