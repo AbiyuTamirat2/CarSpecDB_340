@@ -8,7 +8,7 @@ import requests
 
 
 def connect_to_sql():
-    connection = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='cars_database')
+    connection = mysql.connector.connect(user='root', password='hZn90*X0z1eQ/Ooh', host='http://143.198.63.37/phpmyadmin/', database='CarSpecDB_340')
 
     return connection
 
