@@ -1,46 +1,34 @@
+# Team Abiyu and Scott
 # CNE 340 Winter quarter 2024
-# Abiyu and Scott
+# Final Project
+# Car Specifications Database
+# Due date March 20, 2024
 
-
-import mysql.connector
-import json
-import requests
+# Import libraries
 import pandas as pd
+from sqlalchemy import create_engine
+from matplotlib import pyplot as plt
 
 
-def connect_to_sql():
-    connection = mysql.connector.connect(user='CarSpecDB', password='A2-lX@tZt5r50eG1', host='http://209.38.174.23/phpmyadmin/', database='CarSpecDB')
+# Define database connection
+hostname = '127.0.0.1'
+username = 'root'
+pwd = ''
+dbname = 'CarSpecDB'
 
-    return connection
+# Create database connection engine
+engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}"
+                       .format(host=hostname, db=dbname, user=username, pw=pwd))
 
+# Read data from Excel file
+tables = pd.read_excel(r'C:\Users\abiyu\OneDrive - Renton Technical College\Documents\GitHub\CarSpecDB_340\Car '
+                       r'Specifications Database.xlsx', header=0, index_col=None)
 
-# Create a cars table if it doesn't exist
-def create_table(cursor):
-    cursor.execute('''CREATE TABLE IF NOT EXISTS cars (model VARCHAR(255), mpg FLOAT, cyl INT, disp FLOAT, hp INT, 
-    drat FLOAT, wt FLOAT, qsec FLOAT, vs INT, am INT, gear INT, carb INT)''')
+# Create connection to the database
+connection = engine.connect()
 
-
-# Insert a new car record into the cars table
-def add_new_car(cursor):
-    cursor.execute('''INSERT INTO cars(model, mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb) 
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''')
-
-
-def fetch_cars():
-  try:
-    data = pd.read_csv("cars.csv")
-    if data.empty:
-      print("The CSV file 'cars.csv' is empty or could not be found.")
-    else:
-      print("Cars data loaded successfully!")
-    return data
-
-def main():
-    conn = connect_to_sql()
-    cursor = conn.cursor()
-    create_table(cursor)
+tables.to_sql('car_specifications', con=engine, if_exists='replace')
 
 
-if __name__ == '__main__':
-    main()
+df = pd.read_sql_table('car_specifications', engine.connect())
 
