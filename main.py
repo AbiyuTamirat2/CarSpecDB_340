@@ -25,36 +25,36 @@ def create_table(cursor):
 
 def add_new_car(cursor, car):
     try:
-        model = car['Model']
-        mpg = car['Mpg']
-        cyl = car['Cylinders']
-        disp = car['Displacement']
-        hp = car['Horsepower']
-        drat = car['Drag_Efficiency']
-        wt = car['Weight']
-        cursor.execute('INSERT INTO Cars (Model, Mpg, Cylinders, Displacement, Horsepower, Drag Efficiency, Weight) VALUES(%s, %s, %s, %s, %s, %s, %s)', (model, mpg, cyl, disp, hp, drat, wt))
-        print(f'New Car added to DB {car["Model"]}')
+        model = car['model']
+        mpg = car['mpg']
+        cyl = car['cylinders']
+        disp = car['displacement']
+        hp = car['horsepower']
+        drat = car['drag_efficiency']
+        wt = car['weight']
+        cursor.execute('INSERT INTO Cars (model, mpg, cylinders, displacement, horsepower, drag_efficiency, weight) VALUES(%s, %s, %s, %s, %s, %s, %s)', (model, mpg, cyl, disp, hp, drat, wt))
+        print(f'New Car added to DB {car["model"]}')
     except KeyError as e:
         print(f"Error: Missing key {e} in car data")
 
 def check_if_car_exists(cursor, car):
     model = car['model']
-    query = "SELECT * FROM carsdatabase WHERE Model = %s"
+    query = "SELECT * FROM Cars WHERE model = %s"
     cursor.execute(query, (model,))
     return cursor.fetchall()
 
 def delete_car(cursor, car):
-    model = car['Model']
-    query = "DELETE FROM carsdatabase WHERE model = %s"
+    model = car['model']
+    query = "DELETE FROM Cars WHERE model = %s"
     cursor.execute(query, (model,))
 
 def add_or_print_car(cursor, fetched_cars):
     for car in fetched_cars:
         if not check_if_car_exists(cursor, car):
             add_new_car(cursor, car)
-            print(f'New Car added to DB {car["Model"]}')
+            print(f'New Car added to DB {car["model"]}')
         else:
-            print(f'Existing Car found in DB {car["Model"]}')
+            print(f'Existing Car found in DB {car["model"]}')
 
 def main():
     conn = connect_to_sql()
