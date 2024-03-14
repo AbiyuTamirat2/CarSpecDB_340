@@ -27,11 +27,11 @@ def add_new_car(cursor, car):
     try:
         model = car['model']
         mpg = car.get('mpg', "NA")
-        cyl = car.get('cylinders', "NA")
-        disp = car.get('displacement', "NA")
-        hp = car.get('horsepower', "NA")
-        drat = car.get('drag_efficiency', "NA")
-        wt = car.get('weight', "NA")
+        cyl = car.get('cyl', "NA")
+        disp = car.get('disp', "NA")
+        hp = car.get('hp', "NA")
+        drat = car.get('drat', "NA")
+        wt = car.get('wt', "NA")
         cursor.execute('INSERT INTO Cars (model, mpg, cylinders, displacement, horsepower, drag_efficiency, weight) VALUES(%s, %s, %s, %s, %s, %s, %s)', (model, mpg, cyl, disp, hp, drat, wt))
         print(f'New Car added to DB {car["model"]}')
     except KeyError as e:
