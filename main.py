@@ -26,16 +26,16 @@ def create_table(cursor):
 def add_new_car(cursor, car):
     try:
         model = car['model']
-        mpg = car['mpg']
-        cyl = car['cylinders']
-        disp = car['displacement']
-        hp = car['horsepower']
-        drat = car['drag_efficiency']
-        wt = car['weight']
+        mpg = car.get('mpg', "NA")
+        cyl = car.get('cylinders', "NA")
+        disp = car.get('displacement', "NA")
+        hp = car.get('horsepower', "NA")
+        drat = car.get('drag_efficiency', "NA")
+        wt = car.get('weight', "NA")
         cursor.execute('INSERT INTO Cars (model, mpg, cylinders, displacement, horsepower, drag_efficiency, weight) VALUES(%s, %s, %s, %s, %s, %s, %s)', (model, mpg, cyl, disp, hp, drat, wt))
         print(f'New Car added to DB {car["model"]}')
     except KeyError as e:
-        print(f"Error: Missing key {e} in car data")
+        print(f"Error: Missing key {e} in car data. Skipping car")
 
 def check_if_car_exists(cursor, car):
     model = car['model']
