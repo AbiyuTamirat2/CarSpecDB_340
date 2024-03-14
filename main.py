@@ -5,30 +5,65 @@
 # Due date March 20, 2024
 
 # Import libraries
+import mysql.connector
+import json
+import requests
 import pandas as pd
-from sqlalchemy import create_engine
+#from sqlalchemy import create_engine
 from matplotlib import pyplot as plt
 
+def connect_to_sql():
+    connection = mysql.connector.connect(user='CarSpecDB', password='A2-lX@tZt5r50eG1', host='209.38.174.23', database='CarSpecDB')
+    return connection
 
-# Define database connection
-hostname = '127.0.0.1'
-username = 'root'
-pwd = ''
-dbname = 'CarSpecDB'
+def fetch_cars():
+    data = pd.read_csv("C:\\Users\\Scott\\PycharmProjects\\CarSpecDB_340\\carsdatabase.csv")
+    return data.to_dict('records')
 
-# Create database connection engine
-engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}"
-                       .format(host=hostname, db=dbname, user=username, pw=pwd))
+def create_table(cursor):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Cars (id INT PRIMARY KEY auto_increment, model TEXT, mpg TEXT, cylinders TEXT, displacement TEXT, horsepower TEXT, drag_efficiency TEXT, weight TEXT)''')
 
-# Read data from Excel file
-tables = pd.read_excel(r'C:\Users\abiyu\OneDrive - Renton Technical College\Documents\GitHub\CarSpecDB_340\Car '
-                       r'Specifications Database.xlsx', header=0, index_col=None)
+def add_new_car(cursor, car):
+    try:
+        model = car['Model']
+        mpg = car['Mpg']
+        cyl = car['Cylinders']
+        disp = car['Displacement']
+        hp = car['Horsepower']
+        drat = car['Drag_Efficiency']
+        wt = car['Weight']
+        cursor.execute('INSERT INTO Cars (Model, Mpg, Cylinders, Displacement, Horsepower, Drag Efficiency, Weight) VALUES(%s, %s, %s, %s, %s, %s, %s)', (model, mpg, cyl, disp, hp, drat, wt))
+        print(f'New Car added to DB {car["Model"]}')
+    except KeyError as e:
+        print(f"Error: Missing key {e} in car data")
 
-# Create connection to the database
-connection = engine.connect()
+def check_if_car_exists(cursor, car):
+    model = car['model']
+    query = "SELECT * FROM carsdatabase WHERE Model = %s"
+    cursor.execute(query, (model,))
+    return cursor.fetchall()
 
-tables.to_sql('car_specifications', con=engine, if_exists='replace')
+def delete_car(cursor, car):
+    model = car['Model']
+    query = "DELETE FROM carsdatabase WHERE model = %s"
+    cursor.execute(query, (model,))
 
+def add_or_print_car(cursor, fetched_cars):
+    for car in fetched_cars:
+        if not check_if_car_exists(cursor, car):
+            add_new_car(cursor, car)
+            print(f'New Car added to DB {car["Model"]}')
+        else:
+            print(f'Existing Car found in DB {car["Model"]}')
 
-df = pd.read_sql_table('car_specifications', engine.connect())
+def main():
+    conn = connect_to_sql()
+    cursor = conn.cursor()
+    create_table(cursor)
+    fetched_cars = fetch_cars()
+    add_or_print_car(cursor, fetched_cars)
+    conn.commit()
+    conn.close()
 
+if __name__ == '__main__':
+    main()
