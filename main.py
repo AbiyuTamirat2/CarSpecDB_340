@@ -15,14 +15,13 @@ from matplotlib import pyplot as plt
 
 # Function to connect to MySQL database
 def connect_to_sql():
-    connection = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='CarSpecDB1')
+    connection = mysql.connector.connect(user='CarSpecDB', password='A2-lX@tZt5r50eG1', host='209.38.174.23', database='CarSpecDB')
     return connection
 
 
 # Function to read car data from CSV
 def fetch_cars():
-    data = pd.read_csv(
-        r"C:\Users\abiyu\OneDrive - Renton Technical College\Documents\GitHub\CarSpecDB_340\carsdatabase.csv")
+    data = pd.read_csv("C:\\Users\\Scott\\PycharmProjects\\CarSpecDB_340\\carsdatabase.csv")
     return data.to_dict('records')
 
 
