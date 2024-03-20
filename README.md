@@ -39,5 +39,6 @@ import mysql.connector
 import pandas as pd
 
 ## Contributors
+
 ~ Soctt and Abiyu
 ~ Special thanks to Ixius Procopios for providing valuable guidance and insights.
